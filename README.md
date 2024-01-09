@@ -1,70 +1,90 @@
-# Getting Started with Create React App
+# Job Listing App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the Job Listing App! This application allows you to browse through various job listings, filter them by category, sort them in different orders, and view detailed information about each job. Follow the instructions below to get started.
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+Before you begin, ensure you have met the following requirements:
 
-### `npm start`
+- You have installed the latest version of [Node.js and npm](https://nodejs.org/en/).
+- You have a Windows, Linux, or Mac machine.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Installation
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+To install the Job Listing App, follow these steps:
 
-### `npm test`
+1. Clone the repository:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   ```bash
+   git clone https://git@github.com:majdeddinea/job-listing-app.git
+   ```
 
-### `npm run build`
+2. Navigate to the project directory:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```bash
+   cd job-listing-app
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Install the required npm packages:
+   ```bash
+   npm install
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Configuration
 
-### `npm run eject`
+Set up your environment variables:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. Create `.env` file.
+2. Open the `.env` file and fill in the details:
+   ```
+   REACT_APP_HRFLOW_API_KEY=your_hrflow_api_key
+   REACT_APP_BOARD_KEY=your_board_key
+   REACT_APP_EMAIL_KEY=your_email
+   ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Running the Application
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+To run the Job Listing App, follow these steps:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. Start the development server:
 
-## Learn More
+   ```bash
+   npm start
+   ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. Open your web browser and navigate to [http://localhost:3000](http://localhost:3000).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Using the App
 
-### Code Splitting
+Once the application is running, you can:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **View Jobs**: Browse all available job listings.
+- **Filter Jobs**: Use the category dropdown to filter jobs.
+- **Search Jobs**: Find jobs by name using the search bar.
+- **Sort Jobs**: Use the sort dropdown to order jobs by date, name, or category.
+- **Drag and Drop**: Reorder jobs using drag-and-drop (disabled when a category filter other than 'All' is applied).
+- **Expand Job Details**: Click on a job card to view detailed information about the position.
+- **Reset Filters**: Clear all filters and searches with one click.
 
-### Analyzing the Bundle Size
+## Special Features
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- **Drag-and-Drop Sorting**: You can reorder jobs by dragging and dropping. This feature is disabled when specific category filters are applied.
+- **Sort Dropdown Control**: When drag-and-drop sorting is used, the sort dropdown is disabled. A tooltip appears on hover, indicating that filters need to be cleared to use the sort dropdown again.
 
-### Making a Progressive Web App
+## Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-### Advanced Configuration
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AddFeature`)
+3. Commit your Changes (`git commit -m 'Add some Feature'`)
+4. Push to the Branch (`git push origin feature/AddFeature`)
+5. Open a Pull Request
 
-### Deployment
+## Project Link
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Explore the project here: []()
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
