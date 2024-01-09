@@ -85,6 +85,6 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 ## Project Link
 
-Explore the project here: []()
+Explore the project here: [https://job-listing-fjz0x4vhu-majdeddinea1.vercel.app/](https://job-listing-fjz0x4vhu-majdeddinea1.vercel.app/)
 
 ---
