@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useReducer,
+  useCallback,
+  useMemo,
+} from "react";
 import { fetchAllJobs } from "./api";
 import JobList from "./components/JobList";
 import CategoryDropdown from "./components/CategoryDropdown";
@@ -160,28 +166,31 @@ const App = () => {
   };
 
   // Handle drag-and-drop reordering
-  const onDragEnd = (result) => {
-    if (isDragAndDropDisabled) {
-      return;
-    }
+  const onDragEnd = useCallback(
+    (result) => {
+      if (isDragAndDropDisabled) {
+        return;
+      }
 
-    const { source, destination } = result;
-    if (!destination || source.index === destination.index) {
-      return;
-    }
+      const { source, destination } = result;
+      if (!destination || source.index === destination.index) {
+        return;
+      }
 
-    const newDisplayedJobs = Array.from(displayedJobs);
-    const [reorderedItem] = newDisplayedJobs.splice(source.index, 1);
-    newDisplayedJobs.splice(destination.index, 0, reorderedItem);
-    setDisplayedJobs(newDisplayedJobs);
+      const newDisplayedJobs = Array.from(displayedJobs);
+      const [reorderedItem] = newDisplayedJobs.splice(source.index, 1);
+      newDisplayedJobs.splice(destination.index, 0, reorderedItem);
+      setDisplayedJobs(newDisplayedJobs);
 
-    localStorage.setItem("orderedJobs", JSON.stringify(newDisplayedJobs));
-    localStorage.setItem(
-      `orderedJobs-page${currentPage}`,
-      JSON.stringify(newDisplayedJobs)
-    );
-    setDragAndDropUsed(true);
-  };
+      localStorage.setItem("orderedJobs", JSON.stringify(newDisplayedJobs));
+      localStorage.setItem(
+        `orderedJobs-page${currentPage}`,
+        JSON.stringify(newDisplayedJobs)
+      );
+      setDragAndDropUsed(true);
+    },
+    [displayedJobs, setDisplayedJobs, currentPage]
+  );
 
   // Save filters to localStorage
   const saveFiltersToLocalStorage = () => {
@@ -193,21 +202,46 @@ const App = () => {
     localStorage.setItem("userFilters", JSON.stringify(filters));
   };
 
+  // useMemo for memoizing the filtered and sorted jobs
+  const memoizedDisplayedJobs = useMemo(() => {
+    const filteredJobs = jobs.filter((job) => {
+      const nameMatch = job.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const categoryMatch =
+        selectedCategory === "All" || jobHasCategory(job, selectedCategory);
+      return nameMatch && categoryMatch;
+    });
+
+    const sortedJobs = getSortedJobs(filteredJobs, sortOption);
+    return sortedJobs;
+  }, [jobs, searchTerm, selectedCategory, sortOption]);
+
   // Handlers for changing filters
-  const handleSearchTermChange = (newSearchTerm) => {
-    setSearchTerm(newSearchTerm);
-    saveFiltersToLocalStorage();
-  };
+  // using useCallback to prevent unnecessary re-renders of those child components
+  const handleSearchTermChange = useCallback(
+    (newSearchTerm) => {
+      setSearchTerm(newSearchTerm);
+      saveFiltersToLocalStorage();
+    },
+    [setSearchTerm, saveFiltersToLocalStorage]
+  );
 
-  const handleCategoryChange = (newCategory) => {
-    setSelectedCategory(newCategory);
-    saveFiltersToLocalStorage();
-  };
+  const handleCategoryChange = useCallback(
+    (newCategory) => {
+      setSelectedCategory(newCategory);
+      saveFiltersToLocalStorage();
+    },
+    [setSelectedCategory, saveFiltersToLocalStorage]
+  );
 
-  const handleSortOptionChange = (newSortOption) => {
-    setSortOption(newSortOption);
-    saveFiltersToLocalStorage();
-  };
+  const handleSortOptionChange = useCallback(
+    (newSortOption) => {
+      setSortOption(newSortOption);
+      saveFiltersToLocalStorage();
+    },
+    [setSortOption, saveFiltersToLocalStorage]
+  );
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -240,6 +274,11 @@ const App = () => {
   useEffect(() => {
     setIsDragAndDropDisabled(selectedCategory !== "All");
   }, [selectedCategory]);
+
+  useEffect(() => {
+    // Set displayed jobs from memoized value
+    setDisplayedJobs(memoizedDisplayedJobs);
+  }, [memoizedDisplayedJobs]);
 
   useEffect(() => {
     // This effect restores filters from local storage when the component mounts
@@ -275,13 +314,6 @@ const App = () => {
   useEffect(() => {
     console.log("Jobs updated:", jobs);
   }, [jobs]);
-
-  useEffect(() => {
-    // Update jobs whenever searchTerm, selectedCategory, or sortOption changes
-    const jobsAfterFiltering = filteredJobs(jobs, searchTerm, selectedCategory);
-    const jobsAfterSorting = getSortedJobs(jobsAfterFiltering, sortOption);
-    setDisplayedJobs(jobsAfterSorting);
-  }, [jobs, searchTerm, selectedCategory, sortOption]);
 
   useEffect(() => {
     // Reset flag once jobs are fetched
