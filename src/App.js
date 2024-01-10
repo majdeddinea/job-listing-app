@@ -25,8 +25,6 @@ const App = () => {
 
   const [totalPages, setTotalPages] = useState(0);
 
-  const [justReset, setJustReset] = useState(false);
-
   const categories = [
     "All",
     "AI / Research & Development",
@@ -49,7 +47,6 @@ const App = () => {
     setIsLoading(true);
     try {
       const data = await fetchAllJobs(currentPage);
-      console.log("API Jobs:", data.data.jobs);
       if (data && data.data && Array.isArray(data.data.jobs)) {
         let jobsData = data.data.jobs;
 
@@ -106,11 +103,6 @@ const App = () => {
     );
     const match =
       categoryTag && categoryTag.value.toLowerCase() === category.toLowerCase();
-    console.log(
-      `Job: ${job.name}, Expected: ${category}, Found: ${
-        categoryTag ? categoryTag.value : "none"
-      }, Match: ${match}`
-    );
     return match;
   };
 
@@ -263,17 +255,12 @@ const App = () => {
     localStorage.removeItem("orderedJobs");
     localStorage.removeItem("orderedJobs-page1");
     localStorage.removeItem("orderedJobs-page2");
-    setJustReset(true);
     setDragAndDropUsed(false);
   };
 
   useEffect(() => {
     fetchData();
   }, [currentPage, selectedCategory]);
-
-  useEffect(() => {
-    setIsDragAndDropDisabled(selectedCategory !== "All");
-  }, [selectedCategory]);
 
   useEffect(() => {
     // Set displayed jobs from memoized value
@@ -289,13 +276,6 @@ const App = () => {
       setSortOption(savedFilters.sortOption || "dateDesc");
     }
   }, []);
-
-  useEffect(() => {
-    // Reset flag once jobs are fetched
-    if (justReset && jobs.length > 0) {
-      setJustReset(false);
-    }
-  }, [jobs, justReset]);
 
   useEffect(() => {
     // Disable drag and drop if a specific category is selected (not 'All')
@@ -314,13 +294,6 @@ const App = () => {
   useEffect(() => {
     console.log("Jobs updated:", jobs);
   }, [jobs]);
-
-  useEffect(() => {
-    // Reset flag once jobs are fetched
-    if (justReset && jobs.length > 0) {
-      setJustReset(false);
-    }
-  }, [jobs, justReset]);
 
   return (
     <div className="app">
@@ -363,7 +336,7 @@ const App = () => {
 
       {isLoading && <p>Loading jobs...</p>}
       {error && <p>{error}</p>}
-      {!isLoading && !error && !justReset && jobs.length > 1 && (
+      {!isLoading && !error && jobs.length > 1 && (
         <p>No jobs available. Please adjust your search and filter criteria.</p>
       )}
       {!isLoading &&
