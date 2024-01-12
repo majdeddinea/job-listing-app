@@ -367,7 +367,8 @@ const App = () => {
       {!isLoading &&
         !error &&
         jobs.length > 0 &&
-        displayedJobs.length === 0 && (
+        displayedJobs.length === 0 &&
+        !searchTerm && (
           <p>No jobs found for the selected filters. Try resetting filters.</p>
         )}
       {!isLoading && !error && displayedJobs.length === 0 && searchTerm && (
@@ -380,7 +381,7 @@ const App = () => {
           isDragAndDropDisabled={isDragAndDropDisabled}
         />
       )}
-      {!isLoading && !error && totalPages > 1 && (
+      {!isLoading && !error && displayedJobs.length > 0 && totalPages > 1 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
