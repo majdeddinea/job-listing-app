@@ -12,6 +12,7 @@ import SearchBar from "./components/SearchBar";
 import SortDropdown from "./components/SortDropdown";
 import Pagination from "./components/Pagination";
 import { Helmet } from "react-helmet";
+
 import "./styles.css";
 
 const App = () => {
@@ -45,9 +46,14 @@ const App = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
+    setError(""); // Reset error state
     try {
-      const data = await fetchAllJobs(currentPage);
-      if (data && data.data && Array.isArray(data.data.jobs)) {
+      //const data = await fetchAllJobs(currentPage);
+      const data = await fetchAllJobs(currentPage, 10, 5000);
+      if (data === null) {
+        // Request was canceled, handle accordingly
+        console.log("Data fetching was canceled.");
+      } else if (data && data.data && Array.isArray(data.data.jobs)) {
         let jobsData = data.data.jobs;
 
         const orderedJobsKey = `orderedJobs-page${currentPage}`;
@@ -73,10 +79,24 @@ const App = () => {
         setError("Failed to fetch jobs. No data returned.");
       }
     } catch (error) {
-      setError("Failed to fetch jobs. Please try again later.");
-      console.error(error);
+      if (error.message === "Request canceled due to timeout") {
+        setError("Request timed out. Please try again.");
+      } else {
+        setError("Failed to fetch jobs. Please try again later.");
+      }
     }
     setIsLoading(false);
+  };
+
+  // Debounce function to delay execution
+  const debounce = (func, delay) => {
+    let timerId;
+    return (...args) => {
+      clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
   };
 
   // Apply saved order from local storage
@@ -259,8 +279,13 @@ const App = () => {
   };
 
   useEffect(() => {
+    // Fetch data when the component mounts
     fetchData();
-  }, [currentPage, selectedCategory]);
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [currentPage, selectedCategory, sortOption]);
 
   useEffect(() => {
     // Set displayed jobs from memoized value
@@ -345,6 +370,9 @@ const App = () => {
         displayedJobs.length === 0 && (
           <p>No jobs found for the selected filters. Try resetting filters.</p>
         )}
+      {!isLoading && !error && displayedJobs.length === 0 && searchTerm && (
+        <p>No jobs found for "{searchTerm}". Please try a different search.</p>
+      )}
       {!isLoading && !error && displayedJobs.length > 0 && (
         <JobList
           jobs={displayedJobs}

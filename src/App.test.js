@@ -55,6 +55,8 @@ describe("App Component", () => {
     await waitFor(() => {
       mockJobs.forEach((job) => {
         expect(getByText(job.name)).toBeInTheDocument();
+        const jobCreatedDate = new Date(job.created_at).toLocaleDateString();
+        expect(getByText(`Created at: ${jobCreatedDate}`)).toBeInTheDocument();
       });
     });
   });

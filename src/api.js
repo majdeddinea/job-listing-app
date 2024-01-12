@@ -13,16 +13,33 @@ const options = {
   },
 };
 
-export const fetchAllJobs = async (page, limit = 10) => {
+// Your newAbortSignal function
+function newAbortSignal(timeoutMs) {
+  const abortController = new AbortController();
+  setTimeout(() => abortController.abort(), timeoutMs || 0);
+
+  return abortController.signal;
+}
+
+// Modify the fetchAllJobs function
+export const fetchAllJobs = async (page, limit = 10, timeout = 5000) => {
+  // Default timeout of 5000ms
   try {
     const response = await axios.get(
       `${BASE_URL}/jobs/searching?board_keys=%5B%22${BOARD_KEY}%22%5D&page=${page}&limit=${limit}&order_by=desc`,
-      options
+      {
+        ...options,
+        signal: newAbortSignal(timeout),
+      }
     );
     console.log(response.data.data.jobs);
     return response.data;
   } catch (err) {
-    console.error("Error fetching jobs:", err);
+    if (axios.isCancel(err)) {
+      console.log("Request canceled due to timeout");
+    } else {
+      console.error("Error fetching jobs:", err);
+    }
     throw err;
   }
 };
