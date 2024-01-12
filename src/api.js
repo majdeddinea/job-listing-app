@@ -21,7 +21,6 @@ function newAbortSignal(timeoutMs) {
   return abortController.signal;
 }
 
-// Modify the fetchAllJobs function
 export const fetchAllJobs = async (page, limit = 10, timeout = 5000) => {
   // Default timeout of 5000ms
   try {
