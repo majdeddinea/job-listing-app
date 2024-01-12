@@ -46,9 +46,10 @@ const App = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
-    setError("");
+    setError(""); // Reset error state
     try {
-      const data = await fetchAllJobs(currentPage, 10);
+      //const data = await fetchAllJobs(currentPage);
+      const data = await fetchAllJobs(currentPage, 10, 5000);
       if (data === null) {
         // Request was canceled, handle accordingly
         console.log("Data fetching was canceled.");
@@ -85,6 +86,17 @@ const App = () => {
       }
     }
     setIsLoading(false);
+  };
+
+  // Debounce function to delay execution
+  const debounce = (func, delay) => {
+    let timerId;
+    return (...args) => {
+      clearTimeout(timerId);
+      timerId = setTimeout(() => {
+        func.apply(this, args);
+      }, delay);
+    };
   };
 
   // Apply saved order from local storage
@@ -217,12 +229,14 @@ const App = () => {
     return sortedJobs;
   }, [jobs, searchTerm, selectedCategory, sortOption]);
 
+  // Handlers for changing filters
+  // using useCallback to prevent unnecessary re-renders of those child components
   const handleSearchTermChange = useCallback(
     (newSearchTerm) => {
       setSearchTerm(newSearchTerm);
-      fetchData();
+      saveFiltersToLocalStorage();
     },
-    [setSearchTerm, fetchData]
+    [setSearchTerm, saveFiltersToLocalStorage]
   );
 
   const handleCategoryChange = useCallback(
@@ -268,16 +282,6 @@ const App = () => {
     // Fetch data when the component mounts
     fetchData();
   }, []);
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (searchTerm) {
-        fetchData(); // Fetch data when searchTerm changes
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, currentPage, selectedCategory, sortOption]);
 
   useEffect(() => {
     fetchData();

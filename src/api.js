@@ -13,34 +13,33 @@ const options = {
   },
 };
 
-// CancelToken source defined outside the function
-let cancelTokenSource = axios.CancelToken.source();
+// Your newAbortSignal function
+function newAbortSignal(timeoutMs) {
+  const abortController = new AbortController();
+  setTimeout(() => abortController.abort(), timeoutMs || 0);
 
-export const fetchAllJobs = async (page, limit = 10) => {
-  // Cancel the previous request
-  if (cancelTokenSource) {
-    cancelTokenSource.cancel("Operation canceled due to new request.");
-  }
+  return abortController.signal;
+}
 
-  // Create a new CancelToken for the new request
-  cancelTokenSource = axios.CancelToken.source();
-
+// Modify the fetchAllJobs function
+export const fetchAllJobs = async (page, limit = 10, timeout = 5000) => {
+  // Default timeout of 5000ms
   try {
     const response = await axios.get(
       `${BASE_URL}/jobs/searching?board_keys=%5B%22${BOARD_KEY}%22%5D&page=${page}&limit=${limit}&order_by=desc`,
       {
         ...options,
-        cancelToken: cancelTokenSource.token,
+        signal: newAbortSignal(timeout),
       }
     );
     console.log(response.data.data.jobs);
     return response.data;
   } catch (err) {
     if (axios.isCancel(err)) {
-      console.log("Request canceled:", err.message);
+      console.log("Request canceled due to timeout");
     } else {
       console.error("Error fetching jobs:", err);
-      throw err;
     }
+    throw err;
   }
 };
